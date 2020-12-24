@@ -1,7 +1,4 @@
-import sys
-import curses
 from curses import wrapper
-from time import sleep
 
 
 class Gress:
