@@ -9,6 +9,8 @@ curses-util = "*"
 [dev-packages]
 coverage = "*"
 autopep8 = "*"
+flake8 = "*"
+flake8-import-order = "*"
 
 [requires]
 python_version = "3.8"
