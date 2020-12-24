@@ -1,7 +1,4 @@
-import sys
-import curses
 from curses import wrapper
-from time import sleep
 
 
 class Gress:
@@ -30,16 +27,16 @@ class Gress:
         if self.rows < len(self.grep_arr):
             self.LIMIT_LENGTH = self.rows
         else:
-            self.LIMIT_LENGTH = len(self.grep_arr) - 1
+            self.LIMIT_LENGTH = len(self.grep_arr)
         if self.rows < len(self.files):
             self.FILE_LIMIT_LENGTH = self.rows
         else:
-            self.FILE_LIMIT_LENGTH = len(self.grep_arr) - 1
+            self.FILE_LIMIT_LENGTH = len(self.files)
         stdscr.clear()  # 画面のクリア
+        self.initial_display(stdscr)
         self.cursor_move(stdscr)
 
     def cursor_move(self, stdscr):
-        stdscr.clear()  # 画面のクリア
 
         while True:
             key = stdscr.getkey()
@@ -52,12 +49,31 @@ class Gress:
                 self.handle_k(stdscr)
             elif key == 'j':
                 self.handle_j(stdscr)
+            elif key == 'b':
+                print('rows',
+                      self.rows,
+                      'cols',
+                      self.cols,
+                      'LIMIT_LENGTH',
+                      self.LIMIT_LENGTH,
+                      'FILE_LIMIT_LENGTH',
+                      self.FILE_LIMIT_LENGTH,
+                      'len(self.grep_arr)',
+                      len(self.grep_arr))
             elif key == 'q':
                 break
             else:
                 j = 0
-                for i in range(self.grep_index, self.grep_index + self.LIMIT_LENGTH):
-                    stdscr.addstr(j, 0, self.grep_arr[i]['key'] + ' ' + self.grep_arr[i]['line'])
+                for i in range(
+                        self.grep_index,
+                        self.grep_index +
+                        self.LIMIT_LENGTH):
+                    stdscr.addstr(
+                        j,
+                        0,
+                        self.grep_arr[i]['key'] +
+                        ' ' +
+                        self.grep_arr[i]['line'])
                     stdscr.refresh()
                     j += 1
                 continue
@@ -66,7 +82,7 @@ class Gress:
         self.mode = 'file'
         self.file_index = int(self.grep_arr[self.grep_index]['key'])
         if self.file_index + self.FILE_LIMIT_LENGTH > len(self.files):
-            self.file_index -= 1
+            self.file_index = len(self.files) - self.FILE_LIMIT_LENGTH
         self.display_lines(stdscr, self.file_index)
 
     def handle_h(self, stdscr):
@@ -95,20 +111,29 @@ class Gress:
             self.display_lines(stdscr, self.grep_index)
         else:
             self.file_index += 1
-            if self.file_index+self.LIMIT_LENGTH > len(self.files):
+            if self.file_index + self.FILE_LIMIT_LENGTH > len(self.files):
                 self.file_index -= 1
             self.display_lines(stdscr, self.file_index)
+
+    def initial_display(self, stdscr):
+        self.grep_index = 0
+        self.display_lines(stdscr, self.grep_index)
 
     def display_lines(self, stdscr, index):
         stdscr.clear()
         display_line = 0
         if self.mode == 'grep':
-            for i in range(index, index+self.LIMIT_LENGTH):
-                stdscr.addstr(display_line, 0, self.grep_arr[i]['key'] + ' ' + self.grep_arr[i]['line'])
+            for i in range(index, index + self.LIMIT_LENGTH):
+                stdscr.addstr(
+                    display_line,
+                    0,
+                    self.grep_arr[i]['key'] +
+                    ' ' +
+                    self.grep_arr[i]['line'])
                 stdscr.refresh()
                 display_line += 1
         else:
-            for i in range(index, index+self.FILE_LIMIT_LENGTH):
+            for i in range(index, index + self.FILE_LIMIT_LENGTH):
                 stdscr.addstr(display_line, 0, str(i) + ' ' + self.files[i])
                 stdscr.refresh()
                 display_line += 1

@@ -2,6 +2,7 @@ import unittest
 from unittest import mock
 import gress_lib
 
+
 class Test_gress_lib(unittest.TestCase):
 
     def test_gress_lib_obj(self):
