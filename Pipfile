@@ -8,6 +8,7 @@ curses-util = "*"
 
 [dev-packages]
 coverage = "*"
+autopep8 = "*"
 
 [requires]
 python_version = "3.8"
