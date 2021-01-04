@@ -19,6 +19,7 @@ class Gress:
         self.grep_index = 0
         self.file_index = 0
         self.grep_highlight_index = 0
+        self.target_appendix = []
         f = open(file_name)
         for i, line in enumerate(f.readlines()):
             self.files.append(line.rstrip())
@@ -27,6 +28,7 @@ class Gress:
                 record['key'] = str(i)
                 record['line'] = line.rstrip()
                 self.grep_arr.append(record)
+                self.target_appendix.append(i)
         self.LIMIT_LENGTH, self.FILE_LIMIT_LENGTH = 0, 0
 
     def run(self):
@@ -196,6 +198,9 @@ class Gress:
                 display_line += 1
         else:
             for i in range(index, index + self.FILE_LIMIT_LENGTH):
-                stdscr.addstr(display_line, 0, str(i) + ' ' + self.files[i], curses.color_pair(3))
+                if i in self.target_appendix:
+                    stdscr.addstr(display_line, 0, str(i) + ' ' + self.files[i], curses.color_pair(3))
+                else:
+                    stdscr.addstr(display_line, 0, str(i) + ' ' + self.files[i], curses.COLOR_WHITE)
                 stdscr.refresh()
                 display_line += 1
