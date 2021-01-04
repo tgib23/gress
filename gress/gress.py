@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 import sys
-from .gress_lib import Gress
+#from .gress_lib import Gress
+from gress_lib import Gress
 
 
 def main():
