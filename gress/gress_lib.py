@@ -65,7 +65,11 @@ class Gress:
                 self.handle_d(stdscr)
             elif key == 'u':
                 self.handle_u(stdscr)
+            elif key == 'f':
+                self.handle_f(stdscr)
             elif key == 'b':
+                self.handle_b(stdscr)
+            elif key == 'g':
                 print('rows',
                       self.rows,
                       'cols',
@@ -149,6 +153,25 @@ class Gress:
             self.decrement_file_index('u')
             self.display_lines(stdscr, self.file_index)
 
+    def handle_f(self, stdscr):
+        if self.mode == 'grep':
+            self.increment_highlight_index(stdscr, 'f')
+            self.increment_grep_index('f')
+            self.display_lines(stdscr, self.grep_index)
+        else:
+            self.increment_file_index('f')
+            self.display_lines(stdscr, self.file_index)
+
+    def handle_b(self, stdscr):
+        if self.mode == 'grep':
+            self.decrement_highlight_index('b')
+            self.decrement_grep_index('b')
+            self.display_lines(stdscr, self.grep_index)
+        else:
+            self.decrement_file_index('b')
+            self.display_lines(stdscr, self.file_index)
+
+
     def initial_display(self, stdscr):
         self.grep_index = 0
         self.display_lines(stdscr, self.grep_index)
@@ -173,6 +196,12 @@ class Gress:
                     self.grep_highlight_index += self.rows // 2
                 else:
                     self.grep_highlight_index = len(self.grep_arr) - self.rows
+        if command == 'f':
+            if self.grep_highlight_index < len(self.grep_arr) - self.rows:
+                if self.grep_highlight_index + self.rows < len(self.grep_arr) - self.rows:
+                    self.grep_highlight_index += self.rows
+                else:
+                    self.grep_highlight_index = len(self.grep_arr) - self.rows
 
     def increment_grep_index(self, command):
         if command == 'j':
@@ -185,6 +214,12 @@ class Gress:
             if self.grep_index < len(self.grep_arr) - self.rows:
                 if self.grep_index + self.rows // 2 < len(self.grep_arr) - self.rows:
                     self.grep_index += self.rows // 2
+                else:
+                    self.grep_index = len(self.grep_arr) - self.rows
+        if command == 'f':
+            if self.grep_index < len(self.grep_arr) - self.rows:
+                if self.grep_index + self.rows < len(self.grep_arr) - self.rows:
+                    self.grep_index += self.rows
                 else:
                     self.grep_index = len(self.grep_arr) - self.rows
 
@@ -201,6 +236,13 @@ class Gress:
                else:
                    self.file_index = len(self.files) - self.rows
 
+       if command == 'f':
+           if self.file_index < len(self.files) - self.rows:
+               if self.file_index + self.rows < len(self.files) - self.rows:
+                   self.file_index += self.rows
+               else:
+                   self.file_index = len(self.files) - self.rows
+
     def decrement_highlight_index(self, command):
         if command == 'k':
             if self.grep_highlight_index > 0:
@@ -212,6 +254,13 @@ class Gress:
                     self.grep_highlight_index -= self.rows // 2
                 else:
                     self.grep_highlight_index = 0
+        if command == 'b':
+            if self.grep_index > 0:
+                if self.grep_highlight_index > self.rows:
+                    self.grep_highlight_index -= self.rows
+                else:
+                    self.grep_highlight_index = 0
+
 
     def decrement_grep_index(self, command):
         if command == 'k':
@@ -225,6 +274,12 @@ class Gress:
                     self.grep_index -= self.rows // 2
                 else:
                     self.grep_index = 0
+        if command == 'b':
+            if self.grep_index > 0:
+                if self.grep_index > self.rows:
+                    self.grep_index -= self.rows
+                else:
+                    self.grep_index = 0
 
 
     def decrement_file_index(self, command):
@@ -236,6 +291,12 @@ class Gress:
             if self.file_index > 0:
                 if self.file_index > self.rows // 2:
                     self.file_index -= self.rows // 2
+                else:
+                    self.file_index = 0
+        if command == 'b':
+            if self.file_index > 0:
+                if self.file_index > self.rows:
+                    self.file_index -= self.rows
                 else:
                     self.file_index = 0
 
