@@ -17,6 +17,11 @@ class Test_gress_lib(unittest.TestCase):
             obj.handle_l('test')
             self.assertEqual(obj.mode, 'file')
 
+    def test_handle_h(self):
+        with mock.patch('gress_lib.Gress.display_lines'):
+            obj = gress_lib.Gress('test', 'test/testf')
+            obj.handle_h('test')
+            self.assertEqual(obj.mode, 'grep')
 
 if __name__ == "__main__":
     unittest.main()
