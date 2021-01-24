@@ -57,19 +57,21 @@ class Gress:
                 self.handle_l(stdscr)
             elif key == 'h':
                 self.handle_h(stdscr)
-            elif key == 'k':
+            elif key in ['k', '']:
                 self.handle_k(stdscr)
-            elif key == 'j':
+            elif key in ['j', '']:
                 self.handle_j(stdscr)
-            elif key == 'd':
+            elif key in ['d', '']:
                 self.handle_d(stdscr)
-            elif key == 'u':
+            elif key in ['u', '']:
                 self.handle_u(stdscr)
-            elif key == 'f':
+            elif key in ['f', '']:
                 self.handle_f(stdscr)
-            elif key == 'b':
+            elif key in ['b', '']:
                 self.handle_b(stdscr)
-            elif key == 'g':
+            elif key == 'G':
+                self.handle_G(stdscr)
+            elif key == 'x':
                 print('rows',
                       self.rows,
                       'cols',
@@ -162,6 +164,16 @@ class Gress:
             self.increment_file_index('f')
             self.display_lines(stdscr, self.file_index)
 
+    def handle_G(self, stdscr):
+        if self.mode == 'grep':
+            self.increment_highlight_index(stdscr, 'G')
+            self.increment_grep_index('G')
+            self.display_lines(stdscr, self.grep_index)
+        else:
+            self.increment_file_index('G')
+            self.display_lines(stdscr, self.file_index)
+
+
     def handle_b(self, stdscr):
         if self.mode == 'grep':
             self.decrement_highlight_index('b')
@@ -203,6 +215,10 @@ class Gress:
                 else:
                     self.grep_highlight_index = len(self.grep_arr) - self.rows
 
+        if command == 'G':
+            if len(self.grep_arr) - self.rows > 0:
+                self.grep_highlight_index = len(self.grep_arr) - self.rows
+
     def increment_grep_index(self, command):
         if command == 'j':
             if self.rows < len(self.grep_arr):
@@ -223,25 +239,33 @@ class Gress:
                 else:
                     self.grep_index = len(self.grep_arr) - self.rows
 
+        if command == 'G':
+            if len(self.grep_arr) - self.rows > 0:
+                self.grep_index = len(self.grep_arr) - self.rows
+
     def increment_file_index(self, command):
-       if command == 'j':
-           self.file_index += 1
-           if self.file_index + self.FILE_LIMIT_LENGTH > len(self.files):
-               self.file_index -= 1
+        if command == 'j':
+            self.file_index += 1
+            if self.file_index + self.FILE_LIMIT_LENGTH > len(self.files):
+                self.file_index -= 1
 
-       if command == 'd':
-           if self.file_index < len(self.files) - self.rows:
-               if self.file_index + self.rows // 2 < len(self.files) - self.rows:
-                   self.file_index += self.rows // 2
-               else:
-                   self.file_index = len(self.files) - self.rows
+        if command == 'd':
+            if self.file_index < len(self.files) - self.rows:
+                if self.file_index + self.rows // 2 < len(self.files) - self.rows:
+                    self.file_index += self.rows // 2
+                else:
+                    self.file_index = len(self.files) - self.rows
 
-       if command == 'f':
-           if self.file_index < len(self.files) - self.rows:
-               if self.file_index + self.rows < len(self.files) - self.rows:
-                   self.file_index += self.rows
-               else:
-                   self.file_index = len(self.files) - self.rows
+        if command == 'f':
+            if self.file_index < len(self.files) - self.rows:
+                if self.file_index + self.rows < len(self.files) - self.rows:
+                    self.file_index += self.rows
+                else:
+                    self.file_index = len(self.files) - self.rows
+
+        if command == 'G':
+            if len(self.files) - self.rows > 0:
+                self.file_index = len(self.files) - self.rows
 
     def decrement_highlight_index(self, command):
         if command == 'k':
