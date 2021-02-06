@@ -16,6 +16,6 @@ flake8-import-order = "*"
 python_version = "3.8"
 
 [scripts]
-coverage = "coverage run gress/test_gress_lib.py"
+coverage = "coverage xml gress/test_gress_lib.py"
 format = "autopep8 -ivr ."
 lint = "flake8 --show-source ."
