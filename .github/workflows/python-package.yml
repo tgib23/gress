@@ -38,6 +38,10 @@ jobs:
     - name: Test with pytest
       run: |
         pipenv run coverage
+    - name: Upload coverage to Codecov
+      uses: codecov/codecov-action@v1
+      with:
+        token: ${{ secrets.CODECOV_TOKEN }}
 
 env:
   TERM: 'linux'
