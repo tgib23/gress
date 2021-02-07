@@ -111,93 +111,93 @@ class Gress:
         self.file_index = int(self.grep_arr[self.grep_index]['key'])
         if self.file_index + self.FILE_LIMIT_LENGTH > len(self.files):
             self.file_index = len(self.files) - self.FILE_LIMIT_LENGTH
-        self.display_lines(self.file_index)
+        self.display_lines()
 
     def handle_h(self):
         self.mode = 'grep'
         if self.grep_index + self.LIMIT_LENGTH > len(self.grep_arr):
             self.grep_index -= 1
-        self.display_lines(self.grep_index)
+        self.display_lines()
 
     def handle_k(self):
         if self.mode == 'grep':
             self.decrement_highlight_index('k')
             self.decrement_grep_index('k')
-            self.display_lines(self.grep_index)
+            self.display_lines()
         else:
             self.decrement_file_index('k')
-            self.display_lines(self.file_index)
+            self.display_lines()
 
     def handle_j(self):
         if self.mode == 'grep':
             self.increment_highlight_index('j')
             self.increment_grep_index('j')
-            self.display_lines(self.grep_index)
+            self.display_lines()
         else:
 #            self.file_index += 1
 #            if self.file_index + self.FILE_LIMIT_LENGTH > len(self.files):
 #                self.file_index -= 1
             self.increment_file_index('j')
-            self.display_lines(self.file_index)
+            self.display_lines()
 
     def handle_d(self):
         if self.mode == 'grep':
             self.increment_highlight_index('d')
             self.increment_grep_index('d')
-            self.display_lines(self.grep_index)
+            self.display_lines()
         else:
             self.increment_file_index('d')
-            self.display_lines(self.file_index)
+            self.display_lines()
 
     def handle_u(self):
         if self.mode == 'grep':
             self.decrement_highlight_index('u')
             self.decrement_grep_index('u')
-            self.display_lines(self.grep_index)
+            self.display_lines()
         else:
             self.decrement_file_index('u')
-            self.display_lines(self.file_index)
+            self.display_lines()
 
     def handle_f(self):
         if self.mode == 'grep':
             self.increment_highlight_index('f')
             self.increment_grep_index('f')
-            self.display_lines(self.grep_index)
+            self.display_lines()
         else:
             self.increment_file_index('f')
-            self.display_lines(self.file_index)
+            self.display_lines()
 
     def handle_G(self):
         if self.mode == 'grep':
             self.increment_highlight_index('G')
             self.increment_grep_index('G')
-            self.display_lines(self.grep_index)
+            self.display_lines()
         else:
             self.increment_file_index('G')
-            self.display_lines(self.file_index)
+            self.display_lines()
 
     def handle_g(self):
         if self.mode == 'grep':
             self.increment_highlight_index('g')
             self.increment_grep_index('g')
-            self.display_lines(self.grep_index)
+            self.display_lines()
         else:
             self.increment_file_index('g')
-            self.display_lines(self.file_index)
+            self.display_lines()
 
     def handle_b(self):
         if self.mode == 'grep':
             self.decrement_highlight_index('b')
             self.decrement_grep_index('b')
-            self.display_lines(self.grep_index)
+            self.display_lines()
         else:
             self.decrement_file_index('b')
-            self.display_lines(self.file_index)
+            self.display_lines()
 
 
     def initial_display(self):
         self.grep_index = 0
-        self.display_lines(self.grep_index)
+        self.display_lines()
 
     def increment_highlight_index(self, command):
         if command == 'j':
@@ -344,11 +344,11 @@ class Gress:
                 else:
                     self.file_index = 0
 
-    def display_lines(self, index):
+    def display_lines(self):
         self.stdscr.clear()
         display_line = 0
         if self.mode == 'grep':
-            for i in range(index, index + self.LIMIT_LENGTH-1):
+            for i in range(self.grep_index, self.grep_index + self.LIMIT_LENGTH-1):
                 if i == self.grep_highlight_index:
                     self.stdscr.addstr(
                         display_line,
@@ -372,7 +372,7 @@ class Gress:
                 '[%s mode] %d / %d' % (self.mode, self.grep_highlight_index, len(self.grep_arr))
             )
         else:
-            for i in range(index, index + self.FILE_LIMIT_LENGTH-1):
+            for i in range(self.file_index, self.file_index + self.FILE_LIMIT_LENGTH-1):
                 if i in self.target_appendix:
                     self.stdscr.addstr(display_line, 0, str(i+1) + ' ' + self.files[i], curses.color_pair(3))
                 else:
