@@ -39,11 +39,14 @@ jobs:
       run: |
         pipenv run coverage
     - name: Upload coverage to Codecov
-      uses: codecov/codecov-action@v1
-      with:
-        token: ${{ secrets.CODECOV_TOKEN }}
-        file: ./coverage.xml
-        fail_ci_if_error: true
+      run: |
+         pipenv run codecov -t ${{ secrets.CODECOV_TOKEN }}
+#    - name: Upload coverage to Codecov
+#      uses: codecov/codecov-action@v1
+#      with:
+#        token: ${{ secrets.CODECOV_TOKEN }}
+#        file: ./coverage.xml
+#        fail_ci_if_error: true
 
 env:
   TERM: 'linux'
