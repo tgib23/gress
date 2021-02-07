@@ -37,16 +37,13 @@ jobs:
 #        flake8 . --count --exit-zero --max-complexity=10 --max-line-length=127 --statistics
     - name: Test with pytest
       run: |
-        pipenv run coverage
+        pytest --cov=./ --cov-report=xml
     - name: Upload coverage to Codecov
-      run: |
-         pipenv run codecov -t ${{ secrets.CODECOV_TOKEN }}
-#    - name: Upload coverage to Codecov
-#      uses: codecov/codecov-action@v1
-#      with:
-#        token: ${{ secrets.CODECOV_TOKEN }}
-#        file: ./coverage.xml
-#        fail_ci_if_error: true
+      uses: codecov/codecov-action@v1
+      with:
+        token: ${{ secrets.CODECOV_TOKEN }}
+        file: ./coverage.xml
+        fail_ci_if_error: true
 
 env:
   TERM: 'linux'
