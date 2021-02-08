@@ -23,5 +23,16 @@ class Test_gress_lib(unittest.TestCase):
             obj.handle_h()
             self.assertEqual(obj.mode, 'grep')
 
+    def test_decrement_command(self):
+        with mock.patch('modules.gress_lib.Gress.display_lines'):
+            obj = Gress('test', 'tests/testf')
+            obj.decrement_command('k')
+            self.assertEqual(obj.grep_highlight_index, 0)
+            self.assertEqual(obj.grep_index, 0)
+            obj.grep_highlight_index = 10
+            obj.decrement_command('k')
+            self.assertEqual(obj.grep_highlight_index, 9)
+            self.assertEqual(obj.grep_index, 0)
+
 if __name__ == "__main__":
     unittest.main()
