@@ -14,13 +14,13 @@ class Test_gress_lib(unittest.TestCase):
     def test_handle_l(self):
         with mock.patch('modules.gress_lib.Gress.display_lines'):
             obj = Gress('test', 'tests/testf')
-            obj.handle_l('test')
+            obj.handle_l()
             self.assertEqual(obj.mode, 'file')
 
     def test_handle_h(self):
         with mock.patch('modules.gress_lib.Gress.display_lines'):
             obj = Gress('test', 'tests/testf')
-            obj.handle_h('test')
+            obj.handle_h()
             self.assertEqual(obj.mode, 'grep')
 
 if __name__ == "__main__":
