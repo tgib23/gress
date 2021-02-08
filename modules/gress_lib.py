@@ -59,21 +59,21 @@ class Gress:
             elif key == 'h':
                 self.handle_h()
             elif key in ['k', '']:
-                self.handle_k()
+                self.decrement_command('k')
             elif key in ['j', '']:
-                self.handle_j()
+                self.increment_command('j')
             elif key in ['d', '']:
-                self.handle_d()
+                self.increment_command('d')
             elif key in ['u', '']:
-                self.handle_u()
+                self.decrement_command('u')
             elif key in ['f', '']:
-                self.handle_f()
+                self.increment_command('f')
             elif key in ['b', '']:
-                self.handle_b()
+                self.decrement_command('b')
             elif key == 'G':
-                self.handle_G()
+                self.increment_command('G')
             elif key == 'g':
-                self.handle_g()
+                self.increment_command('g')
             elif key == 'x':
                 print('rows',
                       self.rows,
@@ -119,81 +119,23 @@ class Gress:
             self.grep_index -= 1
         self.display_lines()
 
-    def handle_k(self):
+    def increment_command(self, command):
         if self.mode == 'grep':
-            self.decrement_highlight_index('k')
-            self.decrement_grep_index('k')
+            self.increment_highlight_index(command)
+            self.increment_grep_index(command)
             self.display_lines()
         else:
-            self.decrement_file_index('k')
+            self.increment_file_index(command)
             self.display_lines()
 
-    def handle_j(self):
+    def decrement_command(self, command):
         if self.mode == 'grep':
-            self.increment_highlight_index('j')
-            self.increment_grep_index('j')
+            self.decrement_highlight_index(command)
+            self.decrement_grep_index(command)
             self.display_lines()
         else:
-#            self.file_index += 1
-#            if self.file_index + self.FILE_LIMIT_LENGTH > len(self.files):
-#                self.file_index -= 1
-            self.increment_file_index('j')
+            self.decrement_file_index(command)
             self.display_lines()
-
-    def handle_d(self):
-        if self.mode == 'grep':
-            self.increment_highlight_index('d')
-            self.increment_grep_index('d')
-            self.display_lines()
-        else:
-            self.increment_file_index('d')
-            self.display_lines()
-
-    def handle_u(self):
-        if self.mode == 'grep':
-            self.decrement_highlight_index('u')
-            self.decrement_grep_index('u')
-            self.display_lines()
-        else:
-            self.decrement_file_index('u')
-            self.display_lines()
-
-    def handle_f(self):
-        if self.mode == 'grep':
-            self.increment_highlight_index('f')
-            self.increment_grep_index('f')
-            self.display_lines()
-        else:
-            self.increment_file_index('f')
-            self.display_lines()
-
-    def handle_G(self):
-        if self.mode == 'grep':
-            self.increment_highlight_index('G')
-            self.increment_grep_index('G')
-            self.display_lines()
-        else:
-            self.increment_file_index('G')
-            self.display_lines()
-
-    def handle_g(self):
-        if self.mode == 'grep':
-            self.increment_highlight_index('g')
-            self.increment_grep_index('g')
-            self.display_lines()
-        else:
-            self.increment_file_index('g')
-            self.display_lines()
-
-    def handle_b(self):
-        if self.mode == 'grep':
-            self.decrement_highlight_index('b')
-            self.decrement_grep_index('b')
-            self.display_lines()
-        else:
-            self.decrement_file_index('b')
-            self.display_lines()
-
 
     def initial_display(self):
         self.grep_index = 0
