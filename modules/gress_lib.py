@@ -73,7 +73,7 @@ class Gress:
             elif key == 'G':
                 self.increment_command('G')
             elif key == 'g':
-                self.increment_command('g')
+                self.decrement_command('g')
             elif key == 'x':
                 print('rows',
                       self.rows,
@@ -172,8 +172,6 @@ class Gress:
             if len(self.grep_arr) - self.rows > 0:
                 self.grep_highlight_index = len(self.grep_arr) - self.rows
 
-        if command == 'g':
-            self.grep_highlight_index = 0
 
     def increment_grep_index(self, command):
         if command == 'j':
@@ -199,9 +197,6 @@ class Gress:
             if len(self.grep_arr) - self.rows > 0:
                 self.grep_index = len(self.grep_arr) - self.rows + 1
 
-        if command == 'g':
-            self.grep_index = 0
-
     def increment_file_index(self, command):
         if command in ['j', 'd', 'f']:
             increment_line_num = 0
@@ -221,60 +216,62 @@ class Gress:
         if command == 'G':
             self.file_index = len(self.files) - self.rows + 1
 
-        if command == 'g':
-            self.file_index = 0
 
     def decrement_highlight_index(self, command):
-        if command == 'k':
-            if self.grep_highlight_index > 0:
-                self.grep_highlight_index -= 1
+        if command in ['k', 'u', 'b']:
+            decrement_line_num = 0
+            if command == 'k':
+                decrement_line_num = 1
+            if command == 'u':
+                decrement_line_num = self.rows // 2
+            if command == 'b':
+                decrement_line_num = self.rows
+            self.grep_highlight_index -= decrement_line_num
+            if self.grep_highlight_index < 0:
+                self.grep_highlight_index = 0
 
-        if command == 'u':
-            if self.grep_index > 0:
-                if self.grep_highlight_index > self.rows // 2:
-                    self.grep_highlight_index -= self.rows // 2
-                else:
-                    self.grep_highlight_index = 0
-        if command == 'b':
-            if self.grep_index > 0:
-                if self.grep_highlight_index > self.rows:
-                    self.grep_highlight_index -= self.rows
-                else:
-                    self.grep_highlight_index = 0
-
+        if command == 'g':
+            self.grep_highlight_index = 0
 
     def decrement_grep_index(self, command):
-        if command == 'k':
-            if self.grep_index + self.LIMIT_LENGTH // 2 > self.grep_highlight_index:
-                self.grep_index -= 1
-                if self.grep_index < 0:
-                    self.grep_index += 1
-        if command == 'u':
-            if self.grep_index > 0:
-                if self.grep_index > self.rows // 2:
-                    self.grep_index -= self.rows // 2
-                else:
-                    self.grep_index = 0
-        if command == 'b':
-            if self.grep_index > 0:
-                if self.grep_index > self.rows:
-                    self.grep_index -= self.rows
-                else:
-                    self.grep_index = 0
+        if command in ['k', 'u', 'b']:
+            decrement_line_num = 0
+            if command == 'k':
+                decrement_line_num = 1
+            if command == 'u':
+                decrement_line_num = self.rows // 2
+            if command == 'b':
+                decrement_line_num = self.rows
 
+            # in case the highlight is below the half line of the display,
+            # just decrement the index, not the display
+            if command == 'k':
+                if self.grep_index + self.LIMIT_LENGTH // 2 <= self.grep_highlight_index:
+                    return
+
+            self.grep_index -= decrement_line_num
+            if self.grep_index < 0:
+                self.grep_index = 0
+
+        if command == 'g':
+            self.grep_index = 0
 
     def decrement_file_index(self, command):
-        decrement_line_num = 0
-        if command == 'k':
-            decrement_line_num = 1
-        if command == 'u':
-            decrement_line_num = self.rows // 2
-        if command == 'b':
-            decrement_line_num = self.rows
+        if command in ['k', 'u', 'b']:
+            decrement_line_num = 0
+            if command == 'k':
+                decrement_line_num = 1
+            if command == 'u':
+                decrement_line_num = self.rows // 2
+            if command == 'b':
+                decrement_line_num = self.rows
 
-        if self.file_index > decrement_line_num:
-            self.file_index -= decrement_line_num
-        else:
+            if self.file_index > decrement_line_num:
+                self.file_index -= decrement_line_num
+            else:
+                self.file_index = 0
+
+        if command == 'g':
             self.file_index = 0
 
     def display_lines(self):
