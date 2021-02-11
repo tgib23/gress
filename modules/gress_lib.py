@@ -269,22 +269,18 @@ class Gress:
 
 
     def decrement_file_index(self, command):
+        decrement_line_num = 0
         if command == 'k':
-            self.file_index -= 1
-            if self.file_index < 0:
-                self.file_index += 1
+            decrement_line_num = 1
         if command == 'u':
-            if self.file_index > 0:
-                if self.file_index > self.rows // 2:
-                    self.file_index -= self.rows // 2
-                else:
-                    self.file_index = 0
+            decrement_line_num = self.rows // 2
         if command == 'b':
-            if self.file_index > 0:
-                if self.file_index > self.rows:
-                    self.file_index -= self.rows
-                else:
-                    self.file_index = 0
+            decrement_line_num = self.rows
+
+        if self.file_index > decrement_line_num:
+            self.file_index -= decrement_line_num
+        else:
+            self.file_index = 0
 
     def display_lines(self):
         self.stdscr.clear()
