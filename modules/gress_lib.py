@@ -174,23 +174,23 @@ class Gress:
 
 
     def increment_grep_index(self, command):
-        if command == 'j':
-            if self.rows < len(self.grep_arr):
-                if self.grep_index + self.LIMIT_LENGTH // 2 < self.grep_highlight_index:
-                    self.grep_index += 1
-                    if self.grep_index + self.LIMIT_LENGTH - 1 > len(self.grep_arr):
-                        self.grep_index -= 1
-        if command == 'd':
+        if command in ['j', 'd', 'f']:
+            increment_line_num = 0
+            if command == 'j':
+                increment_line_num = 1
+            if command == 'd':
+                increment_line_num = self.rows // 2
+            if command == 'f':
+                increment_line_num = self.rows
+
+            # in case the highlight is above the half line of the display,
+            # just increment the highlight index, not the display
+            if command == 'j':
+                if self.grep_index + self.LIMIT_LENGTH // 2 >= self.grep_highlight_index:
+                    return
             if self.grep_index < len(self.grep_arr) - self.rows:
-                if self.grep_index + self.rows // 2 < len(self.grep_arr) - self.rows + 1:
-                    self.grep_index += self.rows // 2
-                else:
-                    self.grep_index = len(self.grep_arr) - self.rows + 1
-        if command == 'f':
-            if self.grep_index < len(self.grep_arr) - self.rows:
-                if self.grep_index + self.rows < len(self.grep_arr) - self.rows + 1:
-                    self.grep_index += self.rows
-                else:
+                self.grep_index += increment_line_num
+                if self.grep_index > len(self.grep_arr) - self.rows + 1:
                     self.grep_index = len(self.grep_arr) - self.rows + 1
 
         if command == 'G':
@@ -244,7 +244,7 @@ class Gress:
                 decrement_line_num = self.rows
 
             # in case the highlight is below the half line of the display,
-            # just decrement the index, not the display
+            # just decrement the highlight index, not the display
             if command == 'k':
                 if self.grep_index + self.LIMIT_LENGTH // 2 <= self.grep_highlight_index:
                     return
