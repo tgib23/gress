@@ -203,28 +203,23 @@ class Gress:
             self.grep_index = 0
 
     def increment_file_index(self, command):
-        if command == 'j':
-            self.file_index += 1
-            if self.file_index + self.FILE_LIMIT_LENGTH > len(self.files) + 1:
-                self.file_index -= 1
+        if command in ['j', 'd', 'f']:
+            increment_line_num = 0
+            if command == 'j':
+                increment_line_num = 1
+            if command == 'd':
+                increment_line_num = self.rows // 2
+            if command == 'f':
+                increment_line_num = self.rows
 
-        if command == 'd':
             if self.file_index < len(self.files) - self.rows + 1:
-                if self.file_index + self.rows // 2 < len(self.files) - self.rows + 1:
-                    self.file_index += self.rows // 2
-                else:
-                    self.file_index = len(self.files) - self.rows + 1
-
-        if command == 'f':
-            if self.file_index < len(self.files) - self.rows + 1:
-                if self.file_index + self.rows < len(self.files) - self.rows + 1:
-                    self.file_index += self.rows
+                if self.file_index + increment_line_num < len(self.files) - self.rows + 1:
+                    self.file_index += increment_line_num
                 else:
                     self.file_index = len(self.files) - self.rows + 1
 
         if command == 'G':
-            if len(self.files) - self.rows + 1 > 0:
-                self.file_index = len(self.files) - self.rows + 1
+            self.file_index = len(self.files) - self.rows + 1
 
         if command == 'g':
             self.file_index = 0
