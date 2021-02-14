@@ -53,5 +53,6 @@ class Test_gress_lib(unittest.TestCase):
             obj_file_j.increment_command('j')
             self.assertEqual(obj_file_j.file_index, 21)
 
+
 if __name__ == "__main__":
     unittest.main()

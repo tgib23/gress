@@ -143,8 +143,8 @@ class Gress:
 
     def increment_highlight_index(self, command):
         if command == 'j':
-          if self.grep_highlight_index < len(self.grep_arr) - 1:
-              self.grep_highlight_index += 1
+            if self.grep_highlight_index < len(self.grep_arr) - 1:
+                self.grep_highlight_index += 1
 
         if command in ['d', 'f']:
             increment_line_num = 0
@@ -163,7 +163,6 @@ class Gress:
             # works only if the size of grep_arr is longer than window size
             if len(self.grep_arr) - self.rows > 0:
                 self.grep_highlight_index = len(self.grep_arr) - self.rows + 1
-
 
     def increment_grep_index(self, command):
         if command in ['j', 'd', 'f']:
@@ -207,7 +206,6 @@ class Gress:
 
         if command == 'G':
             self.file_index = len(self.files) - self.rows + 1
-
 
     def decrement_highlight_index(self, command):
         if command in ['k', 'u', 'b']:
