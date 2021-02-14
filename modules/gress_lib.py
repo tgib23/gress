@@ -20,6 +20,8 @@ class Gress:
         self.file_index = 0
         self.grep_highlight_index = 0
         self.target_appendix = []
+        self.grep_size_short = False
+        self.file_size_short = False
         f = open(file_name)
         for i, line in enumerate(f.readlines()):
             self.files.append(line.rstrip())
@@ -30,6 +32,7 @@ class Gress:
                 self.grep_arr.append(record)
                 self.target_appendix.append(i)
         self.GREP_DISPLAY_RANGE, self.FILE_DISPLAY_RANGE = 0, 0
+        self.METAINFO_LINE_NUM = 1
 
     def run(self):
         wrapper(self.main)
@@ -37,14 +40,16 @@ class Gress:
     def main(self, stdscr):
         self.rows, self.cols = stdscr.getmaxyx()
         self.stdscr = stdscr
-        if self.rows < len(self.grep_arr):
-            self.GREP_DISPLAY_RANGE = self.rows
+        if self.rows < len(self.grep_arr) - self.METAINFO_LINE_NUM:
+            self.GREP_DISPLAY_RANGE = self.rows - self.METAINFO_LINE_NUM
         else:
             self.GREP_DISPLAY_RANGE = len(self.grep_arr)
-        if self.rows < len(self.files):
-            self.FILE_DISPLAY_RANGE = self.rows
+            self.grep_size_short= True
+        if self.rows < len(self.files) - self.METAINFO_LINE_NUM:
+            self.FILE_DISPLAY_RANGE = self.rows - self.METAINFO_LINE_NUM
         else:
             self.FILE_DISPLAY_RANGE = len(self.files)
+            self.file_size_short= True
         self.stdscr.clear()  # 画面のクリア
         self.initial_display()
         self.cursor_move()
@@ -118,7 +123,7 @@ class Gress:
     def handle_h(self):
         self.mode = 'grep'
         if self.grep_index + self.GREP_DISPLAY_RANGE > len(self.grep_arr):
-            self.grep_index -= 1
+            self.grep_index = len(self.grep_arr) - self.GREP_DISPLAY_RANGE - 1
         self.display_lines()
 
     def increment_command(self, command):
@@ -181,13 +186,13 @@ class Gress:
             if command == 'j':
                 if self.grep_index + self.GREP_DISPLAY_RANGE // 2 >= self.grep_highlight_index:
                     return
-            if self.grep_index < len(self.grep_arr) - self.rows:
+            if self.grep_index < len(self.grep_arr) - self.GREP_DISPLAY_RANGE:
                 self.grep_index += increment_line_num
-                if self.grep_index > len(self.grep_arr) - self.rows + 1:
-                    self.grep_index = len(self.grep_arr) - self.rows + 1
+                if self.grep_index > len(self.grep_arr) - self.GREP_DISPLAY_RANGE:
+                    self.grep_index = len(self.grep_arr) - self.GREP_DISPLAY_RANGE
 
         if command == 'G':
-            if len(self.grep_arr) - self.rows > 0:
+            if self.grep_size_short is False:
                 self.grep_index = len(self.grep_arr) - self.rows + 1
 
     def increment_file_index(self, command):
@@ -207,7 +212,7 @@ class Gress:
                     self.file_index = len(self.files) - self.rows + 1
 
         if command == 'G':
-            if len(self.files) > self.rows - 1:
+            if self.file_size_short is False:
                 self.file_index = len(self.files) - self.rows + 1
 
     def decrement_highlight_index(self, command):
@@ -271,7 +276,7 @@ class Gress:
         self.stdscr.clear()
         display_line = 0
         if self.mode == 'grep':
-            for i in range(self.grep_index, self.grep_index + self.GREP_DISPLAY_RANGE-1):
+            for i in range(self.grep_index, self.grep_index + self.GREP_DISPLAY_RANGE):
                 if i == self.grep_highlight_index:
                     self.stdscr.addstr(
                         display_line,
@@ -295,7 +300,7 @@ class Gress:
                 '[%s mode] %d / %d' % (self.mode, self.grep_highlight_index, len(self.grep_arr))
             )
         else:
-            for i in range(self.file_index, self.file_index + self.FILE_DISPLAY_RANGE-1):
+            for i in range(self.file_index, self.file_index + self.FILE_DISPLAY_RANGE):
                 if i in self.target_appendix:
                     self.stdscr.addstr(display_line, 0, str(i+1) + ' ' + self.files[i], curses.color_pair(3))
                 else:
