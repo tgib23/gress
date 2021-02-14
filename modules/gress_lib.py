@@ -145,32 +145,24 @@ class Gress:
         if command == 'j':
           if self.grep_highlight_index < len(self.grep_arr) - 1:
               self.grep_highlight_index += 1
-#        else:
-##            stdscr.bkgdset(curses.color_pair(2))
-#            stdscr.bkgd(curses.COLOR_RED)
-##            stdscr.bkgd(curses.COLOR_WHITE)
-#            stdscr.refresh()
-#            time.sleep(1)
-##            curses.use_default_colors()
-#            stdscr.bkgd(curses.COLOR_WHITE)
-#            stdscr.refresh()
 
-        if command == 'd':
+        if command in ['d', 'f']:
+            increment_line_num = 0
+            if command == 'd':
+                increment_line_num = self.rows // 2
+            if command == 'f':
+                increment_line_num = self.rows
+
             if self.grep_highlight_index < len(self.grep_arr) - self.rows:
-                if self.grep_highlight_index + self.rows // 2 < len(self.grep_arr) - self.rows:
-                    self.grep_highlight_index += self.rows // 2
+                if self.grep_highlight_index + increment_line_num < len(self.grep_arr) - self.rows:
+                    self.grep_highlight_index += increment_line_num
                 else:
-                    self.grep_highlight_index = len(self.grep_arr) - self.rows
-        if command == 'f':
-            if self.grep_highlight_index < len(self.grep_arr) - self.rows:
-                if self.grep_highlight_index + self.rows < len(self.grep_arr) - self.rows:
-                    self.grep_highlight_index += self.rows
-                else:
-                    self.grep_highlight_index = len(self.grep_arr) - self.rows
+                    self.grep_highlight_index = len(self.grep_arr) - self.rows + 1
 
         if command == 'G':
+            # works only if the size of grep_arr is longer than window size
             if len(self.grep_arr) - self.rows > 0:
-                self.grep_highlight_index = len(self.grep_arr) - self.rows
+                self.grep_highlight_index = len(self.grep_arr) - self.rows + 1
 
 
     def increment_grep_index(self, command):
