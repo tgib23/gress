@@ -29,7 +29,7 @@ class Gress:
                 record['line'] = line.rstrip()
                 self.grep_arr.append(record)
                 self.target_appendix.append(i)
-        self.LIMIT_LENGTH, self.FILE_LIMIT_LENGTH = 0, 0
+        self.GREP_DISPLAY_RANGE, self.FILE_DISPLAY_RANGE = 0, 0
 
     def run(self):
         wrapper(self.main)
@@ -38,13 +38,13 @@ class Gress:
         self.rows, self.cols = stdscr.getmaxyx()
         self.stdscr = stdscr
         if self.rows < len(self.grep_arr):
-            self.LIMIT_LENGTH = self.rows
+            self.GREP_DISPLAY_RANGE = self.rows
         else:
-            self.LIMIT_LENGTH = len(self.grep_arr)
+            self.GREP_DISPLAY_RANGE = len(self.grep_arr)
         if self.rows < len(self.files):
-            self.FILE_LIMIT_LENGTH = self.rows
+            self.FILE_DISPLAY_RANGE = self.rows
         else:
-            self.FILE_LIMIT_LENGTH = len(self.files)
+            self.FILE_DISPLAY_RANGE = len(self.files)
         self.stdscr.clear()  # 画面のクリア
         self.initial_display()
         self.cursor_move()
@@ -79,12 +79,14 @@ class Gress:
                       self.rows,
                       'cols',
                       self.cols,
-                      'LIMIT_LENGTH',
-                      self.LIMIT_LENGTH,
-                      'FILE_LIMIT_LENGTH',
-                      self.FILE_LIMIT_LENGTH,
+                      'GREP_DISPLAY_RANGE',
+                      self.GREP_DISPLAY_RANGE,
+                      'FILE_DISPLAY_RANGE',
+                      self.FILE_DISPLAY_RANGE,
                       'len(self.grep_arr)',
                       len(self.grep_arr),
+                      'grep_index',
+                      self.grep_index,
                       'grep_highlight_index',
                       self.grep_highlight_index
                       )
@@ -95,7 +97,7 @@ class Gress:
                 for i in range(
                         self.grep_index,
                         self.grep_index +
-                        self.LIMIT_LENGTH):
+                        self.GREP_DISPLAY_RANGE):
                     self.stdscr.addstr(
                         j,
                         0,
@@ -109,13 +111,13 @@ class Gress:
     def handle_l(self):
         self.mode = 'file'
         self.file_index = int(self.grep_arr[self.grep_index]['key'])
-        if self.file_index + self.FILE_LIMIT_LENGTH > len(self.files):
-            self.file_index = len(self.files) - self.FILE_LIMIT_LENGTH
+        if self.file_index + self.FILE_DISPLAY_RANGE > len(self.files):
+            self.file_index = len(self.files) - self.FILE_DISPLAY_RANGE
         self.display_lines()
 
     def handle_h(self):
         self.mode = 'grep'
-        if self.grep_index + self.LIMIT_LENGTH > len(self.grep_arr):
+        if self.grep_index + self.GREP_DISPLAY_RANGE > len(self.grep_arr):
             self.grep_index -= 1
         self.display_lines()
 
@@ -177,7 +179,7 @@ class Gress:
             # in case the highlight is above the half line of the display,
             # just increment the highlight index, not the display
             if command == 'j':
-                if self.grep_index + self.LIMIT_LENGTH // 2 >= self.grep_highlight_index:
+                if self.grep_index + self.GREP_DISPLAY_RANGE // 2 >= self.grep_highlight_index:
                     return
             if self.grep_index < len(self.grep_arr) - self.rows:
                 self.grep_index += increment_line_num
@@ -205,7 +207,8 @@ class Gress:
                     self.file_index = len(self.files) - self.rows + 1
 
         if command == 'G':
-            self.file_index = len(self.files) - self.rows + 1
+            if len(self.files) > self.rows - 1:
+                self.file_index = len(self.files) - self.rows + 1
 
     def decrement_highlight_index(self, command):
         if command in ['k', 'u', 'b']:
@@ -236,7 +239,7 @@ class Gress:
             # in case the highlight is below the half line of the display,
             # just decrement the highlight index, not the display
             if command == 'k':
-                if self.grep_index + self.LIMIT_LENGTH // 2 <= self.grep_highlight_index:
+                if self.grep_index + self.GREP_DISPLAY_RANGE // 2 <= self.grep_highlight_index:
                     return
 
             self.grep_index -= decrement_line_num
@@ -268,7 +271,7 @@ class Gress:
         self.stdscr.clear()
         display_line = 0
         if self.mode == 'grep':
-            for i in range(self.grep_index, self.grep_index + self.LIMIT_LENGTH-1):
+            for i in range(self.grep_index, self.grep_index + self.GREP_DISPLAY_RANGE-1):
                 if i == self.grep_highlight_index:
                     self.stdscr.addstr(
                         display_line,
@@ -292,7 +295,7 @@ class Gress:
                 '[%s mode] %d / %d' % (self.mode, self.grep_highlight_index, len(self.grep_arr))
             )
         else:
-            for i in range(self.file_index, self.file_index + self.FILE_LIMIT_LENGTH-1):
+            for i in range(self.file_index, self.file_index + self.FILE_DISPLAY_RANGE-1):
                 if i in self.target_appendix:
                     self.stdscr.addstr(display_line, 0, str(i+1) + ' ' + self.files[i], curses.color_pair(3))
                 else:
