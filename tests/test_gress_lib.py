@@ -102,5 +102,32 @@ class Test_gress_lib(unittest.TestCase):
         obj_file_2.display_lines.assert_called_once()
         self.assertEqual(obj_file_2.file_index, 901)
 
+    def test_decrement_u_command(self):
+        # index is larger than rows
+        obj_grep = Gress('test', 'tests/testf')
+        obj_grep.rows = 30
+        obj_grep.GREP_DISPLAY_RANGE = 29
+        obj_grep.grep_highlight_index = 50
+        obj_grep.grep_index = 50
+        obj_grep.display_lines = MagicMock(return_value='ok')
+
+        obj_grep.decrement_command('u')
+        obj_grep.display_lines.assert_called_once()
+        self.assertEqual(obj_grep.grep_highlight_index, 35)
+        self.assertEqual(obj_grep.grep_index, 35)
+
+        # index is shorter than rows
+        obj_grep = Gress('test', 'tests/testf')
+        obj_grep.rows = 30
+        obj_grep.GREP_DISPLAY_RANGE = 29
+        obj_grep.grep_highlight_index = 10
+        obj_grep.grep_index = 10
+        obj_grep.display_lines = MagicMock(return_value='ok')
+
+        obj_grep.decrement_command('u')
+        obj_grep.display_lines.assert_called_once()
+        self.assertEqual(obj_grep.grep_highlight_index, 0)
+        self.assertEqual(obj_grep.grep_index, 0)
+
 if __name__ == "__main__":
     unittest.main()
