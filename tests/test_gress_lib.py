@@ -56,16 +56,16 @@ class Test_gress_lib(unittest.TestCase):
 
     def test_increment_d_command(self):
         # size of grep-arr is several times larger than rows
-        obj_grep_ = Gress('test', 'tests/testf')
-        obj_grep_.rows = 30
-        obj_grep_.GREP_DISPLAY_RANGE = 29
-        obj_grep_.grep_highlight_index = 0
-        obj_grep_.display_lines = MagicMock(return_value='ok')
+        obj_grep = Gress('test', 'tests/testf')
+        obj_grep.rows = 30
+        obj_grep.GREP_DISPLAY_RANGE = 29
+        obj_grep.grep_highlight_index = 0
+        obj_grep.display_lines = MagicMock(return_value='ok')
 
-        obj_grep_.increment_command('d')
-        obj_grep_.display_lines.assert_called_once()
-        self.assertEqual(obj_grep_.grep_highlight_index, 15)
-        self.assertEqual(obj_grep_.grep_index, 15)
+        obj_grep.increment_command('d')
+        obj_grep.display_lines.assert_called_once()
+        self.assertEqual(obj_grep.grep_highlight_index, 15)
+        self.assertEqual(obj_grep.grep_index, 15)
 
         # size of grep_arr is not very different against rows
         obj_grep_2 = Gress('test', 'tests/testf')
@@ -79,6 +79,28 @@ class Test_gress_lib(unittest.TestCase):
         self.assertEqual(obj_grep_2.grep_highlight_index, 8)
         self.assertEqual(obj_grep_2.grep_index, 8)
 
+        # size of rows is much shorter than file size
+        obj_file = Gress('test', 'tests/testf')
+        obj_file.rows = 30
+        obj_file.GREP_DISPLAY_RANGE = 29
+        obj_file.mode = 'file'
+        obj_file.display_lines = MagicMock(return_value='ok')
+
+        obj_file.increment_command('d')
+        obj_file.display_lines.assert_called_once()
+        self.assertEqual(obj_file.file_index, 15)
+
+        # file_index is almost the end of the file
+        obj_file_2 = Gress('test', 'tests/testf')
+        obj_file_2.rows = 100
+        obj_file_2.GREP_DISPLAY_RANGE = 99
+        obj_file_2.mode = 'file'
+        obj_file_2.file_index = 890
+        obj_file_2.display_lines = MagicMock(return_value='ok')
+
+        obj_file_2.increment_command('d')
+        obj_file_2.display_lines.assert_called_once()
+        self.assertEqual(obj_file_2.file_index, 901)
 
 if __name__ == "__main__":
     unittest.main()
