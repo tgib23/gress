@@ -1,5 +1,6 @@
 import unittest
 from unittest import mock
+from unittest.mock import MagicMock
 from modules.gress_lib import Gress
 
 
@@ -52,6 +53,18 @@ class Test_gress_lib(unittest.TestCase):
             obj_file_j.file_index = 20
             obj_file_j.increment_command('j')
             self.assertEqual(obj_file_j.file_index, 21)
+
+    def test_increment_d_command(self):
+        obj = Gress('test', 'tests/testf')
+        obj.rows = 100
+        obj.GREP_DISPLAY_RANGE = 99
+        obj.grep_highlight_index = 0
+        obj.display_lines = MagicMock(return_value='ok')
+
+        obj.increment_command('d')
+        obj.display_lines.assert_called_once()
+        self.assertEqual(obj.grep_highlight_index, 8)
+        self.assertEqual(obj.grep_index, 8)
 
 
 if __name__ == "__main__":
