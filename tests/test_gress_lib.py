@@ -55,16 +55,29 @@ class Test_gress_lib(unittest.TestCase):
             self.assertEqual(obj_file_j.file_index, 21)
 
     def test_increment_d_command(self):
-        obj = Gress('test', 'tests/testf')
-        obj.rows = 100
-        obj.GREP_DISPLAY_RANGE = 99
-        obj.grep_highlight_index = 0
-        obj.display_lines = MagicMock(return_value='ok')
+        # size of grep-arr is several times larger than rows
+        obj_grep_ = Gress('test', 'tests/testf')
+        obj_grep_.rows = 30
+        obj_grep_.GREP_DISPLAY_RANGE = 29
+        obj_grep_.grep_highlight_index = 0
+        obj_grep_.display_lines = MagicMock(return_value='ok')
 
-        obj.increment_command('d')
-        obj.display_lines.assert_called_once()
-        self.assertEqual(obj.grep_highlight_index, 8)
-        self.assertEqual(obj.grep_index, 8)
+        obj_grep_.increment_command('d')
+        obj_grep_.display_lines.assert_called_once()
+        self.assertEqual(obj_grep_.grep_highlight_index, 15)
+        self.assertEqual(obj_grep_.grep_index, 15)
+
+        # size of grep_arr is not very different against rows
+        obj_grep_2 = Gress('test', 'tests/testf')
+        obj_grep_2.rows = 100
+        obj_grep_2.GREP_DISPLAY_RANGE = 99
+        obj_grep_2.grep_highlight_index = 0
+        obj_grep_2.display_lines = MagicMock(return_value='ok')
+
+        obj_grep_2.increment_command('d')
+        obj_grep_2.display_lines.assert_called_once()
+        self.assertEqual(obj_grep_2.grep_highlight_index, 8)
+        self.assertEqual(obj_grep_2.grep_index, 8)
 
 
 if __name__ == "__main__":
